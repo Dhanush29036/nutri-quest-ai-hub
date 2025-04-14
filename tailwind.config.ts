@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,44 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// NutriQuest custom colors
+				"nq-green": {
+					50: "#f0fdf4",
+					100: "#dcfce7",
+					200: "#bbf7d0",
+					300: "#86efac",
+					400: "#4ade80",
+					500: "#22c55e",
+					600: "#16a34a",
+					700: "#15803d",
+					800: "#166534",
+					900: "#14532d",
+				},
+				"nq-purple": {
+					50: "#faf5ff",
+					100: "#f3e8ff",
+					200: "#e9d5ff",
+					300: "#d8b4fe",
+					400: "#c084fc",
+					500: "#a855f7",
+					600: "#9333ea",
+					700: "#7e22ce",
+					800: "#6b21a8",
+					900: "#581c87",
+				},
+				"nq-blue": {
+					50: "#eff6ff",
+					100: "#dbeafe",
+					200: "#bfdbfe",
+					300: "#93c5fd",
+					400: "#60a5fa",
+					500: "#3b82f6",
+					600: "#2563eb",
+					700: "#1d4ed8",
+					800: "#1e40af",
+					900: "#1e3a8a",
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -69,27 +107,45 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			keyframes: {
-				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+				"accordion-down": {
+					from: { height: '0' },
+					to: { height: "var(--radix-accordion-content-height)" },
 				},
-				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
-				}
+				"accordion-up": {
+					from: { height: "var(--radix-accordion-content-height)" },
+					to: { height: '0' },
+				},
+				"pulse-gentle": {
+					"0%, 100%": { opacity: "1" },
+					"50%": { opacity: "0.8" },
+				},
+				"float": {
+					"0%, 100%": { transform: "translateY(0)" },
+					"50%": { transform: "translateY(-5px)" },
+				},
+				"slide-up": {
+					"0%": { transform: "translateY(10px)", opacity: "0" },
+					"100%": { transform: "translateY(0)", opacity: "1" },
+				},
+				"coin-bounce": {
+					"0%, 100%": { transform: "translateY(0)" },
+					"50%": { transform: "translateY(-10px)" },
+				},
+				"celebrate": {
+					"0%": { transform: "scale(0)" },
+					"70%": { transform: "scale(1.1)" },
+					"100%": { transform: "scale(1)" },
+				},
 			},
 			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				"accordion-down": "accordion-down 0.2s ease-out",
+				"accordion-up": "accordion-up 0.2s ease-out",
+				"pulse-gentle": "pulse-gentle 3s ease-in-out infinite",
+				"float": "float 3s ease-in-out infinite",
+				"slide-up": "slide-up 0.5s ease-out",
+				"coin-bounce": "coin-bounce 0.5s ease-in-out",
+				"celebrate": "celebrate 0.5s ease-out",
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
