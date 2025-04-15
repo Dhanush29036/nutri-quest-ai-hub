@@ -1,14 +1,16 @@
 
 import React from "react";
-import { Bell, Sun, MoonStar } from "lucide-react";
+import { Bell, Sun, MoonStar, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -31,6 +33,16 @@ const Navbar = () => {
     <nav className="bg-card border-b border-border h-16 px-4 flex items-center justify-between">
       <div className="flex-1 md:flex md:justify-center">
         <div className="flex items-center justify-end space-x-4">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="flex items-center gap-2"
+            onClick={() => navigate('/auth')}
+          >
+            <User className="h-4 w-4" />
+            <span className="hidden sm:inline">Account</span>
+          </Button>
+          
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" size="icon" className="relative">

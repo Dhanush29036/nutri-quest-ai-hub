@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -14,15 +14,18 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Home, PieChart, Utensils, Heart, MessageCircle, Trophy, Settings } from "lucide-react";
+import { Home, PieChart, Utensils, Heart, MessageCircle, Trophy, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 
 const AppSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const coins = 245;
   const level = 12;
   const xpProgress = 65;
@@ -65,6 +68,16 @@ const AppSidebar = () => {
       path: "/settings",
     },
   ];
+
+  const handleLogout = () => {
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
+    });
+    // In a real app, this would clear auth tokens, etc.
+    // For now, we'll just redirect to the login page
+    setTimeout(() => navigate('/auth'), 1000);
+  };
 
   return (
     <Sidebar>
@@ -139,7 +152,7 @@ const AppSidebar = () => {
       </SidebarContent>
 
       <SidebarFooter className="p-4 border-t border-sidebar-border">
-        <div className="space-y-2">
+        <div className="space-y-4">
           <div className="p-3 bg-muted rounded-lg space-y-2">
             <h4 className="font-medium text-sm flex items-center">
               <Trophy className="w-4 h-4 mr-1 text-nq-green-500" /> 
@@ -147,11 +160,21 @@ const AppSidebar = () => {
             </h4>
             <div className="flex items-center justify-between text-sm">
               <span>🔥 7 days</span>
-              <Button variant="outline" size="sm" className="h-7 text-xs">
+              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => navigate('/challenges')}>
                 View All
               </Button>
             </div>
           </div>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full flex items-center justify-center"
+            onClick={handleLogout}
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
         </div>
       </SidebarFooter>
       
