@@ -1,10 +1,11 @@
 
-import React from "react";
+import React, { useContext } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight, Trophy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { UserContext, UserContextType } from "../../App";
 
 interface Meal {
   id: string;
@@ -18,6 +19,8 @@ interface Meal {
 
 const MealPlanCard = () => {
   const { toast } = useToast();
+  const userContext = useContext(UserContext) as UserContextType;
+  const { user, updateUser } = userContext;
   
   const meals: Meal[] = [
     {
@@ -25,7 +28,7 @@ const MealPlanCard = () => {
       time: "8:00 AM",
       name: "Probiotic Smoothie Bowl",
       description: "Blueberries, banana, kefir, and granola",
-      completed: true,
+      completed: false,
       imageUrl: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
       coins: 15,
     },
@@ -47,10 +50,38 @@ const MealPlanCard = () => {
       imageUrl: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
       coins: 25,
     },
+    {
+      id: "4",
+      time: "10:30 AM",
+      name: "Fermented Foods Snack Plate",
+      description: "Kimchi, sauerkraut, pickles, and whole grain crackers",
+      completed: false,
+      imageUrl: "https://images.unsplash.com/photo-1576107232684-1279f390859f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+      coins: 15,
+    },
+    {
+      id: "5",
+      time: "3:30 PM",
+      name: "Greek Yogurt Parfait",
+      description: "Greek yogurt, honey, walnuts, and berries",
+      completed: false,
+      imageUrl: "https://images.unsplash.com/photo-1488477181946-6428a0291777?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+      coins: 10,
+    },
   ];
 
+  // Track logged meals in local state
+  const [loggedMeals, setLoggedMeals] = React.useState<string[]>([]);
+
   const handleLogMeal = (meal: Meal) => {
-    if (!meal.completed) {
+    if (!loggedMeals.includes(meal.id)) {
+      // Update local state
+      setLoggedMeals([...loggedMeals, meal.id]);
+      
+      // Update user coins
+      updateUser({ coins: user.coins + meal.coins });
+      
+      // Show toast
       toast({
         title: "Meal completed!",
         description: `You earned ${meal.coins} coins for ${meal.name}`,
@@ -75,7 +106,7 @@ const MealPlanCard = () => {
             <div
               key={meal.id}
               className={`flex items-center border rounded-lg p-2 ${
-                meal.completed ? "border-nq-green-200 bg-nq-green-50" : "border-border"
+                loggedMeals.includes(meal.id) ? "border-nq-green-200 bg-nq-green-50" : "border-border"
               }`}
             >
               <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
@@ -97,17 +128,17 @@ const MealPlanCard = () => {
                 <p className="text-xs text-muted-foreground line-clamp-1">{meal.description}</p>
               </div>
               <Button
-                variant={meal.completed ? "outline" : "default"}
+                variant={loggedMeals.includes(meal.id) ? "outline" : "default"}
                 size="sm"
                 className={`ml-2 flex-shrink-0 ${
-                  meal.completed
+                  loggedMeals.includes(meal.id)
                     ? "bg-nq-green-100 border-nq-green-200 text-nq-green-700"
                     : "bg-nq-green-500 hover:bg-nq-green-600"
                 }`}
                 onClick={() => handleLogMeal(meal)}
-                disabled={meal.completed}
+                disabled={loggedMeals.includes(meal.id)}
               >
-                {meal.completed ? "Logged" : "Log Meal"}
+                {loggedMeals.includes(meal.id) ? "Logged" : "Log Meal"}
               </Button>
             </div>
           ))}

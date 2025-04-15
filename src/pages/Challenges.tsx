@@ -1,11 +1,13 @@
 
-import React from "react";
+import React, { useContext } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Star, Timer, ArrowUpRight, Users, Gift } from "lucide-react";
+import { Trophy, Star, Timer, ArrowUpRight, Users, Gift, BookOpen, Apple, Dumbbell, Brain, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+import { UserContext, UserContextType } from "../App";
 
 interface Challenge {
   id: string;
@@ -22,6 +24,22 @@ interface Challenge {
 }
 
 const Challenges = () => {
+  const { toast } = useToast();
+  const userContext = useContext(UserContext) as UserContextType;
+  const { completedChallenges, addCompletedChallenge } = userContext;
+
+  // Function to handle challenge completion
+  const handleCompleteChallenge = (challenge: Challenge) => {
+    if (!completedChallenges.includes(challenge.id)) {
+      addCompletedChallenge(challenge.id, challenge.coins);
+      
+      toast({
+        title: "Challenge Completed!",
+        description: `You earned ${challenge.coins} coins for completing "${challenge.title}"`,
+      });
+    }
+  };
+
   const activeChallenges: Challenge[] = [
     {
       id: "1",
@@ -60,6 +78,32 @@ const Challenges = () => {
       xp: 120,
       category: "Activity",
       icon: <Timer className="h-5 w-5 text-blue-500" />,
+      daysLeft: 2,
+    },
+    {
+      id: "9",
+      title: "Fiber Focus",
+      description: "Eat 30g of fiber every day for a week",
+      difficulty: "medium",
+      progress: 4,
+      total: 7,
+      coins: 80,
+      xp: 160,
+      category: "Nutrition",
+      icon: <Apple className="h-5 w-5 text-green-500" />,
+      daysLeft: 3,
+    },
+    {
+      id: "10",
+      title: "Mindful Eating",
+      description: "Eat without distractions for 5 meals",
+      difficulty: "easy",
+      progress: 2,
+      total: 5,
+      coins: 40,
+      xp: 80,
+      category: "Mindfulness",
+      icon: <Brain className="h-5 w-5 text-indigo-500" />,
       daysLeft: 2,
     },
   ];
@@ -101,9 +145,46 @@ const Challenges = () => {
       category: "Community",
       icon: <Users className="h-5 w-5 text-pink-500" />,
     },
+    {
+      id: "11",
+      title: "Recipe Master",
+      description: "Cook 3 gut-friendly recipes from our collection",
+      difficulty: "medium",
+      progress: 0,
+      total: 3,
+      coins: 70,
+      xp: 140,
+      category: "Cooking",
+      icon: <BookOpen className="h-5 w-5 text-amber-500" />,
+    },
+    {
+      id: "12",
+      title: "Strength Builder",
+      description: "Complete 3 resistance training workouts",
+      difficulty: "medium",
+      progress: 0,
+      total: 3,
+      coins: 65,
+      xp: 130,
+      category: "Fitness",
+      icon: <Dumbbell className="h-5 w-5 text-red-500" />,
+    },
+    {
+      id: "13",
+      title: "Sugar Detox",
+      description: "Avoid added sugars for 5 days",
+      difficulty: "hard",
+      progress: 0,
+      total: 5,
+      coins: 90,
+      xp: 180,
+      category: "Nutrition",
+      icon: <Sparkles className="h-5 w-5 text-blue-500" />,
+    },
   ];
 
-  const completedChallenges: Challenge[] = [
+  // Get the actual completed challenges from context
+  const completedChallengesData: Challenge[] = [
     {
       id: "7",
       title: "Water Champion",
@@ -128,7 +209,24 @@ const Challenges = () => {
       category: "Mindfulness",
       icon: <Star className="h-5 w-5 text-purple-500" />,
     },
+    // Add user completed challenges from context
+    ...availableChallenges.filter(challenge => 
+      completedChallenges.includes(challenge.id)
+    ),
+    ...activeChallenges.filter(challenge => 
+      completedChallenges.includes(challenge.id)
+    )
   ];
+
+  // Filter active challenges to remove completed ones
+  const filteredActiveChallenges = activeChallenges.filter(
+    challenge => !completedChallenges.includes(challenge.id)
+  );
+
+  // Filter available challenges to remove completed ones
+  const filteredAvailableChallenges = availableChallenges.filter(
+    challenge => !completedChallenges.includes(challenge.id)
+  );
 
   const renderChallengeCard = (challenge: Challenge, active: boolean = true) => (
     <Card key={challenge.id} className="overflow-hidden">
@@ -190,11 +288,31 @@ const Challenges = () => {
               value={(challenge.progress / challenge.total) * 100} 
               className="h-1.5"
             />
+            
+            {/* Add Complete button for active challenges */}
+            {challenge.progress === challenge.total && (
+              <Button 
+                size="sm" 
+                className="w-full mt-3 bg-nq-green-500 hover:bg-nq-green-600"
+                onClick={() => handleCompleteChallenge(challenge)}
+              >
+                Complete Challenge
+              </Button>
+            )}
           </div>
         )}
         
         {!active && (
-          <Button size="sm" className="w-full mt-3">
+          <Button 
+            size="sm" 
+            className="w-full mt-3"
+            onClick={() => {
+              toast({
+                title: "Challenge Accepted!",
+                description: `You've started "${challenge.title}"`,
+              });
+            }}
+          >
             Accept Challenge
           </Button>
         )}
@@ -218,7 +336,7 @@ const Challenges = () => {
               <Trophy className="h-6 w-6 mr-2" />
               <h3 className="font-semibold">Active Challenges</h3>
             </div>
-            <p className="text-2xl font-bold mt-2">{activeChallenges.length}</p>
+            <p className="text-2xl font-bold mt-2">{filteredActiveChallenges.length}</p>
           </CardContent>
         </Card>
         
@@ -228,7 +346,7 @@ const Challenges = () => {
               <Star className="h-6 w-6 mr-2" />
               <h3 className="font-semibold">Total Completed</h3>
             </div>
-            <p className="text-2xl font-bold mt-2">{completedChallenges.length}</p>
+            <p className="text-2xl font-bold mt-2">{completedChallengesData.length}</p>
           </CardContent>
         </Card>
         
@@ -239,7 +357,7 @@ const Challenges = () => {
               <h3 className="font-semibold">Coins Earned</h3>
             </div>
             <p className="text-2xl font-bold mt-2">
-              {completedChallenges.reduce((sum, challenge) => sum + challenge.coins, 0)}
+              {userContext.user.coins}
             </p>
           </CardContent>
         </Card>
@@ -251,7 +369,7 @@ const Challenges = () => {
               <h3 className="font-semibold">XP Gained</h3>
             </div>
             <p className="text-2xl font-bold mt-2">
-              {completedChallenges.reduce((sum, challenge) => sum + challenge.xp, 0)}
+              {completedChallengesData.reduce((sum, challenge) => sum + challenge.xp, 0)}
             </p>
           </CardContent>
         </Card>
@@ -266,19 +384,19 @@ const Challenges = () => {
         
         <TabsContent value="active" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {activeChallenges.map(challenge => renderChallengeCard(challenge))}
+            {filteredActiveChallenges.map(challenge => renderChallengeCard(challenge))}
           </div>
         </TabsContent>
         
         <TabsContent value="available" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {availableChallenges.map(challenge => renderChallengeCard(challenge, false))}
+            {filteredAvailableChallenges.map(challenge => renderChallengeCard(challenge, false))}
           </div>
         </TabsContent>
         
         <TabsContent value="completed" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {completedChallenges.map(challenge => (
+            {completedChallengesData.map(challenge => (
               <Card key={challenge.id} className="overflow-hidden">
                 <div className="h-1 bg-nq-green-500"></div>
                 <CardContent className="p-4">

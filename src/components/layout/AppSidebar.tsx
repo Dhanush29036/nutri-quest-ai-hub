@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -20,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import { UserContext, UserContextType } from "../../App";
 
 interface AppSidebarProps {
   onLogout?: () => void;
@@ -29,9 +31,8 @@ const AppSidebar = ({ onLogout }: AppSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const coins = 245;
-  const level = 12;
-  const xpProgress = 65;
+  const userContext = useContext(UserContext) as UserContextType;
+  const { user } = userContext;
 
   const menuItems = [
     {
@@ -102,23 +103,25 @@ const AppSidebar = ({ onLogout }: AppSidebarProps) => {
       <SidebarContent className="px-4 pt-6">
         <div className="mb-6 text-center">
           <Avatar className="w-16 h-16 mx-auto mb-2 border-2 border-nq-green-400">
-            <AvatarImage src="https://i.pravatar.cc/300" alt="User" />
-            <AvatarFallback className="bg-nq-purple-200 text-nq-purple-700">JD</AvatarFallback>
+            <AvatarImage src={user.avatar} alt={user.name} />
+            <AvatarFallback className="bg-nq-purple-200 text-nq-purple-700">
+              {user.name.split(' ').map(n => n[0]).join('')}
+            </AvatarFallback>
           </Avatar>
-          <h3 className="font-semibold">Jane Doe</h3>
-          <p className="text-sm text-muted-foreground">Level {level} Explorer</p>
+          <h3 className="font-semibold">{user.name}</h3>
+          <p className="text-sm text-muted-foreground">Level {user.level} Explorer</p>
           
           <div className="mt-3">
             <div className="flex justify-between mb-1 text-xs">
-              <span>XP Level {level}</span>
-              <span>{xpProgress}%</span>
+              <span>XP Level {user.level}</span>
+              <span>{user.xpProgress}%</span>
             </div>
-            <Progress value={xpProgress} className="h-2 bg-muted" />
+            <Progress value={user.xpProgress} className="h-2 bg-muted" />
           </div>
           
           <div className="mt-3 bg-nq-green-50 p-2 rounded-lg inline-flex items-center">
             <span className="coin mr-1">🪙</span>
-            <span className="font-medium">{coins} coins</span>
+            <span className="font-medium">{user.coins} coins</span>
           </div>
         </div>
 
