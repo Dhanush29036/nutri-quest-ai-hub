@@ -11,6 +11,8 @@ import MealPlanner from "./pages/MealPlanner";
 import ChatPage from "./pages/ChatPage";
 import HealthMetrics from "./pages/HealthMetrics";
 import Challenges from "./pages/Challenges";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { useState, useEffect } from "react";
@@ -38,6 +40,9 @@ const App = () => {
             <Route path="/health-metrics" element={<AppLayout><HealthMetrics /></AppLayout>} />
             <Route path="/challenges" element={<AppLayout><Challenges /></AppLayout>} />
             <Route path="/chat" element={<AppLayout><ChatPage /></AppLayout>} />
+            <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
+            <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
+            <Route path="/settings/:tab" element={<AppLayout><Settings /></AppLayout>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
