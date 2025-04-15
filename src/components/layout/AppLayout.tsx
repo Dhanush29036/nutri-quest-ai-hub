@@ -1,26 +1,24 @@
 
-import React, { useState } from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import AppSidebar from "./AppSidebar";
+import React from "react";
 import Navbar from "./Navbar";
+import AppSidebar from "./AppSidebar";
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  onLogout?: () => void;
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+const AppLayout: React.FC<AppLayoutProps> = ({ children, onLogout }) => {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <main className="flex-1 p-4 md:p-6 overflow-auto">
-            {children}
-          </main>
-        </div>
+    <div className="flex h-screen overflow-hidden">
+      <AppSidebar onLogout={onLogout} />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Navbar onLogout={onLogout} />
+        <main className="flex-1 overflow-y-auto bg-background">
+          {children}
+        </main>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 

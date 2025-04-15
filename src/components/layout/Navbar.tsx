@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Bell, Sun, MoonStar, User, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const Navbar = () => {
+interface NavbarProps {
+  onLogout?: () => void;
+}
+
+const Navbar = ({ onLogout }: NavbarProps) => {
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -32,11 +35,15 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    // In a real app, this would clear auth tokens, session data, etc.
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
     });
+    
+    if (onLogout) {
+      onLogout();
+    }
+    
     navigate("/auth");
   };
 

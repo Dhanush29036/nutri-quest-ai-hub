@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -46,7 +45,11 @@ const signupSchema = z.object({
   path: ["confirmPassword"],
 });
 
-const Auth = () => {
+interface AuthProps {
+  onLogin?: () => void;
+}
+
+const Auth = ({ onLogin }: AuthProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -75,10 +78,16 @@ const Auth = () => {
     // Demo login for now - would connect to a real auth system in production
     setTimeout(() => {
       setIsLoading(false);
+      
+      if (onLogin) {
+        onLogin();
+      }
+      
       toast({
         title: "Login successful",
         description: "Welcome back to NutriQuest!",
       });
+      
       navigate("/");
     }, 1500);
   };
@@ -89,10 +98,16 @@ const Auth = () => {
     // Demo signup for now - would connect to a real auth system in production
     setTimeout(() => {
       setIsLoading(false);
+      
+      if (onLogin) {
+        onLogin();
+      }
+      
       toast({
         title: "Account created",
         description: "Welcome to NutriQuest! Your nutrition journey begins now.",
       });
+      
       navigate("/");
     }, 1500);
   };

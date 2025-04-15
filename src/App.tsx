@@ -21,7 +21,33 @@ const queryClient = new QueryClient();
 
 const App = () => {
   // For demo purposes - in a real app, this would be managed by an auth system
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    localStorage.getItem("isAuthenticated") === "true"
+  );
+
+  // Function to handle login
+  const handleLogin = () => {
+    localStorage.setItem("isAuthenticated", "true");
+    setIsAuthenticated(true);
+  };
+
+  // Function to handle logout
+  const handleLogout = () => {
+    localStorage.setItem("isAuthenticated", "false");
+    setIsAuthenticated(false);
+  };
+
+  // Check localStorage on initial load
+  useEffect(() => {
+    const authStatus = localStorage.getItem("isAuthenticated");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
+    } else if (authStatus === null) {
+      // First time visiting the site, set default to not authenticated
+      localStorage.setItem("isAuthenticated", "false");
+      setIsAuthenticated(false);
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -31,18 +57,88 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             {/* Auth route */}
-            <Route path="/auth" element={isAuthenticated ? <Navigate to="/" /> : <Auth />} />
+            <Route 
+              path="/auth" 
+              element={
+                isAuthenticated ? 
+                <Navigate to="/" /> : 
+                <Auth onLogin={handleLogin} />
+              } 
+            />
             
             {/* Protected routes */}
-            <Route path="/" element={<AppLayout><Dashboard /></AppLayout>} />
-            <Route path="/microbiome" element={<AppLayout><Microbiome /></AppLayout>} />
-            <Route path="/meal-planner" element={<AppLayout><MealPlanner /></AppLayout>} />
-            <Route path="/health-metrics" element={<AppLayout><HealthMetrics /></AppLayout>} />
-            <Route path="/challenges" element={<AppLayout><Challenges /></AppLayout>} />
-            <Route path="/chat" element={<AppLayout><ChatPage /></AppLayout>} />
-            <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
-            <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
-            <Route path="/settings/:tab" element={<AppLayout><Settings /></AppLayout>} />
+            <Route 
+              path="/" 
+              element={
+                isAuthenticated ? 
+                <AppLayout onLogout={handleLogout}><Dashboard /></AppLayout> : 
+                <Navigate to="/auth" />
+              } 
+            />
+            <Route 
+              path="/microbiome" 
+              element={
+                isAuthenticated ? 
+                <AppLayout onLogout={handleLogout}><Microbiome /></AppLayout> : 
+                <Navigate to="/auth" />
+              } 
+            />
+            <Route 
+              path="/meal-planner" 
+              element={
+                isAuthenticated ? 
+                <AppLayout onLogout={handleLogout}><MealPlanner /></AppLayout> : 
+                <Navigate to="/auth" />
+              } 
+            />
+            <Route 
+              path="/health-metrics" 
+              element={
+                isAuthenticated ? 
+                <AppLayout onLogout={handleLogout}><HealthMetrics /></AppLayout> : 
+                <Navigate to="/auth" />
+              } 
+            />
+            <Route 
+              path="/challenges" 
+              element={
+                isAuthenticated ? 
+                <AppLayout onLogout={handleLogout}><Challenges /></AppLayout> : 
+                <Navigate to="/auth" />
+              } 
+            />
+            <Route 
+              path="/chat" 
+              element={
+                isAuthenticated ? 
+                <AppLayout onLogout={handleLogout}><ChatPage /></AppLayout> : 
+                <Navigate to="/auth" />
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                isAuthenticated ? 
+                <AppLayout onLogout={handleLogout}><Profile /></AppLayout> : 
+                <Navigate to="/auth" />
+              } 
+            />
+            <Route 
+              path="/settings" 
+              element={
+                isAuthenticated ? 
+                <AppLayout onLogout={handleLogout}><Settings /></AppLayout> : 
+                <Navigate to="/auth" />
+              } 
+            />
+            <Route 
+              path="/settings/:tab" 
+              element={
+                isAuthenticated ? 
+                <AppLayout onLogout={handleLogout}><Settings /></AppLayout> : 
+                <Navigate to="/auth" />
+              } 
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -22,7 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 
-const AppSidebar = () => {
+interface AppSidebarProps {
+  onLogout?: () => void;
+}
+
+const AppSidebar = ({ onLogout }: AppSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -74,9 +77,12 @@ const AppSidebar = () => {
       title: "Logged out",
       description: "You have been successfully logged out",
     });
-    // In a real app, this would clear auth tokens, etc.
-    // For now, we'll just redirect to the login page
-    setTimeout(() => navigate('/auth'), 1000);
+    
+    if (onLogout) {
+      onLogout();
+    }
+    
+    navigate('/auth');
   };
 
   return (
